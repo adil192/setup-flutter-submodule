@@ -16,7 +16,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # Flutter clone fails on Windows due to long path issues
+      - name: Enable long paths on Windows
+        if: runner.os == 'Windows'
+        shell: bash
+        run: git config --system core.longpaths true
+
       - name: Create Flutter submodule
+        shell: bash
         run: |
           git submodule add -b stable https://github.com/flutter/flutter.git submodules/flutter
           # Deinit to mimic using actions/checkout without submodules

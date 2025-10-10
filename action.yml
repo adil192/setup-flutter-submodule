@@ -21,10 +21,15 @@ inputs:
 runs:
   using: 'composite'
   steps:
+    # Flutter clone fails on Windows due to long path issues
+    - name: Enable long paths on Windows
+      if: runner.os == 'Windows'
+      shell: bash
+      run: git config --system core.longpaths true
+
     - name: Shallow clone Flutter submodule
       shell: bash
-      run: |
-        git submodule update --init --depth 1 ${{ inputs.flutter-path }}
+      run: git submodule update --init --depth 1 ${{ inputs.flutter-path }}
 
     - name: Set FLUTTER_ROOT and PUB_CACHE environment variables
       shell: bash
@@ -76,4 +81,4 @@ runs:
 
     - name: Run flutter doctor
       shell: bash
-      run: flutter doctor
+      run: flutter precache --universal
