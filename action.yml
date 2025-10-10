@@ -65,7 +65,7 @@ runs:
       working-directory: ${{ inputs.flutter-path }}
       run: |
         # Fetches the tag from github without downloading the entire repo history
-        FLUTTER_VERSION=$(git ls-remote --tags origin | awk -v c="$(git rev-parse HEAD)" '$1 == c {print $2}' | xargs -n1)
+        FLUTTER_VERSION=$(git ls-remote --tags origin | awk -v c="$(git rev-parse HEAD)" '$1 == c { sub(/refs\/tags\//, "", $2); print $2 }')
         if [ -n "$FLUTTER_VERSION" ]; then
           git tag -f "$FLUTTER_VERSION"
           echo "FLUTTER_VERSION=$FLUTTER_VERSION" >> $GITHUB_ENV
