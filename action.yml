@@ -56,7 +56,10 @@ runs:
       shell: bash
       run: |
         FLUTTER_ROOT=$(cygpath -w "${{ env.FLUTTER_ROOT }}")
+        echo "FLUTTER_ROOT=$FLUTTER_ROOT" >> $GITHUB_ENV
         PUB_CACHE=$(cygpath -w "${{ env.PUB_CACHE }}")
+        echo "PUB_CACHE=$PUB_CACHE" >> $GITHUB_ENV
+
         echo "$FLUTTER_ROOT\\bin" >> $GITHUB_PATH
         echo "$PUB_CACHE\\bin" >> $GITHUB_PATH
 
