@@ -1,6 +1,9 @@
 name: Setup Flutter submodule
 description: Installs and configures Flutter from a git submodule.
 author: adil192
+branding:
+  icon: "smartphone"
+  color: "blue"
 inputs:
   flutter-path:
     description: 'Path to the Flutter submodule (absolute or relative).'
