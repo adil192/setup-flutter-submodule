@@ -31,6 +31,7 @@ runs:
       run: |
         FLUTTER_ROOT=$(realpath "${{ inputs.flutter-path }}")
         echo "FLUTTER_ROOT=$FLUTTER_ROOT" >> $GITHUB_ENV
+        mkdir -p "${{ inputs.pub-cache }}"
         PUB_CACHE=$(realpath "${{ inputs.pub-cache }}")
         echo "PUB_CACHE=$PUB_CACHE" >> $GITHUB_ENV
 
