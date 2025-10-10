@@ -1,0 +1,78 @@
+name: Setup Flutter submodule
+description: Installs and configures Flutter from a git submodule.
+author: adil192
+inputs:
+  flutter-path:
+    description: 'Path to the Flutter submodule (absolute or relative).'
+    required: true
+    default: 'submodules/flutter'
+  pub-cache:
+    description: 'Path to the pub cache directory (absolute or relative).'
+    required: false
+    default: '.pub-cache'
+  cache-flutter:
+    description: 'Whether to cache the Flutter SDK between workflow runs.'
+    required: false
+    default: 'true'
+  cache-pub:
+    description: 'Whether to cache the pub cache between workflow runs.'
+    required: false
+    default: 'true'
+runs:
+  using: 'composite'
+  steps:
+    - name: Shallow clone Flutter submodule
+      shell: bash
+      run: |
+        git submodule update --init --depth 1 ${{ inputs.flutter-path }}
+
+    - name: Set FLUTTER_ROOT and PUB_CACHE environment variables
+      shell: bash
+      run: |
+        FLUTTER_ROOT=$(realpath "${{ inputs.flutter-path }}")
+        echo "FLUTTER_ROOT=$FLUTTER_ROOT" >> $GITHUB_ENV
+        PUB_CACHE=$(realpath "${{ inputs.pub-cache }}")
+        echo "PUB_CACHE=$PUB_CACHE" >> $GITHUB_ENV
+
+    - name: Add Flutter to PATH
+      shell: bash
+      run: |
+        echo "${{ env.FLUTTER_ROOT }}/bin" >> $GITHUB_PATH
+        echo "${{ env.PUB_CACHE }}/bin" >> $GITHUB_PATH
+
+    - name: Set Flutter version tag
+      shell: bash
+      working-directory: ${{ inputs.flutter-path }}
+      run: |
+        # Fetches the tag from github without downloading the entire repo history
+        FLUTTER_VERSION=$(git ls-remote --tags origin | awk -v c="$(git rev-parse HEAD)" '$1 == c {print $2}' | xargs -n1)
+        if [ -n "$FLUTTER_VERSION" ]; then
+          git tag -f "$FLUTTER_VERSION"
+          echo "FLUTTER_VERSION=$FLUTTER_VERSION" >> $GITHUB_ENV
+        else
+          echo "Warning: Could not determine Flutter version tag for the current commit."
+        fi
+    
+    - name: Cache Pub
+      if: ${{ inputs.cache-pub == 'true' }}
+      uses: actions/cache@v4
+      with:
+        path: ${{ inputs.pub-cache }}
+        # Cache Pub before Flutter so cached pubspec.locks don't change this hash
+        key: ${{ runner.os }}-${{ runner.arch }}-pub-${{ env.FLUTTER_VERSION }}-${{ hashFiles('**/pubspec.yaml') }}-${{ hashFiles('**/pubspec.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-${{ runner.arch }}-pub-${{ env.FLUTTER_VERSION }}-
+
+    - name: Cache Flutter SDK
+      if: ${{ inputs.cache-flutter == 'true' }}
+      uses: actions/cache@v4
+      with:
+        path: |
+          ${{ inputs.flutter-path }}/**/.dart_tool/
+          ${{ inputs.flutter-path }}/bin/cache/
+          ${{ inputs.flutter-path }}/packages/flutter_tools/
+        key: ${{ runner.os }}-${{ runner.arch }}-flutter-${{ env.FLUTTER_VERSION }}
+
+    - name: Run flutter doctor
+      shell: bash
+      run: flutter doctor

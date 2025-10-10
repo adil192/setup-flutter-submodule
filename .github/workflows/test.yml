@@ -1,0 +1,30 @@
+name: Test
+
+on:
+  workflow_dispatch:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    strategy:
+      matrix:
+        runner: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.runner }}
+    name: Test on ${{ matrix.runner }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Create Flutter submodule
+        run: |
+          git submodule add -b stable https://github.com/flutter/flutter.git submodules/flutter
+          # Deinit to mimic using actions/checkout without submodules
+          git submodule deinit -f submodules/flutter
+
+      - name: Setup Flutter submodule
+        uses: ./
+        with:
+          flutter-path: submodules/flutter
+
+      - name: Verify Flutter installation
+        run: flutter doctor -v
