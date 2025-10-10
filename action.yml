@@ -36,15 +36,26 @@ runs:
       run: |
         FLUTTER_ROOT=$(realpath "${{ inputs.flutter-path }}")
         echo "FLUTTER_ROOT=$FLUTTER_ROOT" >> $GITHUB_ENV
+
         mkdir -p "${{ inputs.pub-cache }}"
         PUB_CACHE=$(realpath "${{ inputs.pub-cache }}")
         echo "PUB_CACHE=$PUB_CACHE" >> $GITHUB_ENV
 
-    - name: Add Flutter to PATH
+    - name: Add Flutter to PATH (Unix)
+      if: runner.os != 'Windows'
       shell: bash
       run: |
         echo "${{ env.FLUTTER_ROOT }}/bin" >> $GITHUB_PATH
         echo "${{ env.PUB_CACHE }}/bin" >> $GITHUB_PATH
+    
+    - name: Add Flutter to PATH (Windows)
+      if: runner.os == 'Windows'
+      shell: bash
+      run: |
+        FLUTTER_ROOT=$(cygpath -w "${{ env.FLUTTER_ROOT }}")
+        PUB_CACHE=$(cygpath -w "${{ env.PUB_CACHE }}")
+        echo "$FLUTTER_ROOT\\bin" >> $GITHUB_PATH
+        echo "$PUB_CACHE\\bin" >> $GITHUB_PATH
 
     - name: Set Flutter version tag
       shell: bash
