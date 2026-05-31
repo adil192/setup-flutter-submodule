@@ -100,6 +100,6 @@ runs:
         key: ${{ runner.os }}-${{ runner.arch }}-flutter-v2-${{ env.FLUTTER_VERSION }}
 
     - name: Precache universal Flutter dependencies
-      if: ${{ inputs.cache-flutter == 'true' && steps.cache-primes.outputs.cache-hit == '' }}
+      if: ${{ inputs.cache-flutter == 'true' && steps.cache-flutter.outputs.cache-hit == '' }}
       shell: bash
       run: flutter precache --universal
