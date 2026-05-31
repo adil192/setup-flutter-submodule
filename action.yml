@@ -21,6 +21,10 @@ inputs:
     description: 'Whether to cache the pub cache between workflow runs.'
     required: false
     default: 'true'
+  no-save-caches:
+    description: 'Whether to only restore caches and not save them.'
+    required: false
+    default: 'false'
 runs:
   using: 'composite'
   steps:
@@ -77,8 +81,16 @@ runs:
         fi
 
     - name: Cache Pub
-      if: ${{ inputs.cache-pub == 'true' }}
+      if: ${{ inputs.cache-pub == 'true' && inputs.no-save-caches != 'true' }}
       uses: actions/cache@v5
+      with:
+        path: ${{ inputs.pub-cache }}
+        key: ${{ runner.os }}-${{ runner.arch }}-pub-v2-${{ env.FLUTTER_VERSION }}-${{ hashFiles('**/pubspec.yaml') }}
+        restore-keys: |
+          ${{ runner.os }}-${{ runner.arch }}-pub-v2-${{ env.FLUTTER_VERSION }}-
+    - name: Cache restore Pub
+      if: ${{ inputs.cache-pub == 'true' && inputs.no-save-caches == 'true' }}
+      uses: actions/cache/restore@v5
       with:
         path: ${{ inputs.pub-cache }}
         key: ${{ runner.os }}-${{ runner.arch }}-pub-v2-${{ env.FLUTTER_VERSION }}-${{ hashFiles('**/pubspec.yaml') }}
@@ -87,8 +99,20 @@ runs:
 
     - name: Cache Flutter SDK
       id: cache-flutter
-      if: ${{ inputs.cache-flutter == 'true' }}
+      if: ${{ inputs.cache-flutter == 'true' && inputs.no-save-caches != 'true' }}
       uses: actions/cache@v5
+      with:
+        path: |
+          ${{ inputs.flutter-path }}/**/.dart_tool/
+          ${{ inputs.flutter-path }}/bin/cache/
+          ${{ inputs.flutter-path }}/packages/flutter_tools/gradle/.gradle/
+          ${{ inputs.flutter-path }}/packages/flutter_tools/gradle/.kotlin/
+          ${{ inputs.flutter-path }}/packages/flutter_tools/gradle/build/
+          ${{ inputs.flutter-path }}/packages/flutter_tools/pubspec.lock
+        key: ${{ runner.os }}-${{ runner.arch }}-flutter-v2-${{ env.FLUTTER_VERSION }}
+    - name: Cache restore Flutter SDK
+      if: ${{ inputs.cache-flutter == 'true' && inputs.no-save-caches == 'true' }}
+      uses: actions/cache/restore@v5
       with:
         path: |
           ${{ inputs.flutter-path }}/**/.dart_tool/
@@ -100,6 +124,6 @@ runs:
         key: ${{ runner.os }}-${{ runner.arch }}-flutter-v2-${{ env.FLUTTER_VERSION }}
 
     - name: Precache universal Flutter dependencies
-      if: ${{ inputs.cache-flutter == 'true' && steps.cache-flutter.outputs.cache-hit == '' }}
+      if: ${{ inputs.cache-flutter == 'true' && inputs.no-save-caches != 'true' && steps.cache-flutter.outputs.cache-hit == '' }}
       shell: bash
       run: flutter precache --universal

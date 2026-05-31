@@ -58,6 +58,11 @@ steps:
       # Whether to cache the pub cache between workflow runs.
       # Defaults to true.
       cache-pub: true
+
+      # (Optional)
+      # Whether to only restore caches and not save them.
+      # Defaults to false.
+      no-save-caches: false
 ```
 
 ## Updating Flutter
