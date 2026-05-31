@@ -86,6 +86,7 @@ runs:
           ${{ runner.os }}-${{ runner.arch }}-pub-${{ env.FLUTTER_VERSION }}-
 
     - name: Cache Flutter SDK
+      id: cache-flutter
       if: ${{ inputs.cache-flutter == 'true' }}
       uses: actions/cache@v4
       with:
@@ -98,6 +99,7 @@ runs:
           ${{ inputs.flutter-path }}/packages/flutter_tools/pubspec.lock
         key: ${{ runner.os }}-${{ runner.arch }}-flutter-${{ env.FLUTTER_VERSION }}
 
-    - name: Run flutter doctor
+    - name: Precache universal Flutter dependencies
+      if: ${{ inputs.cache-flutter == 'true' && steps.cache-primes.outputs.cache-hit == '' }}
       shell: bash
       run: flutter precache --universal
