@@ -27,7 +27,7 @@ steps:
     uses: actions/checkout@v4
 
   - name: Setup Flutter submodule
-    uses: adil192/setup-flutter-submodule@v1
+    uses: adil192/setup-flutter-submodule@v3
     with:
       flutter-path: submodules/flutter
 
@@ -39,7 +39,7 @@ steps:
 
 ```yaml
   - name: Setup Flutter submodule
-    uses: adil192/setup-flutter-submodule@v1
+    uses: adil192/setup-flutter-submodule@v3
     with:
       # The path to the Flutter submodule (absolute or relative).
       flutter-path: submodules/flutter
