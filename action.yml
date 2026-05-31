@@ -92,7 +92,10 @@ runs:
         path: |
           ${{ inputs.flutter-path }}/**/.dart_tool/
           ${{ inputs.flutter-path }}/bin/cache/
-          ${{ inputs.flutter-path }}/packages/flutter_tools/
+          ${{ inputs.flutter-path }}/packages/flutter_tools/gradle/.gradle/
+          ${{ inputs.flutter-path }}/packages/flutter_tools/gradle/.kotlin/
+          ${{ inputs.flutter-path }}/packages/flutter_tools/gradle/build/
+          ${{ inputs.flutter-path }}/packages/flutter_tools/pubspec.lock
         key: ${{ runner.os }}-${{ runner.arch }}-flutter-${{ env.FLUTTER_VERSION }}
 
     - name: Run flutter doctor
