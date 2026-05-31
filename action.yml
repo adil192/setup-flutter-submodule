@@ -50,7 +50,7 @@ runs:
       run: |
         echo "${{ env.FLUTTER_ROOT }}/bin" >> $GITHUB_PATH
         echo "${{ env.PUB_CACHE }}/bin" >> $GITHUB_PATH
-    
+
     - name: Add Flutter to PATH (Windows)
       if: runner.os == 'Windows'
       shell: bash
@@ -75,14 +75,13 @@ runs:
         else
           echo "Warning: Could not determine Flutter version tag for the current commit."
         fi
-    
+
     - name: Cache Pub
       if: ${{ inputs.cache-pub == 'true' }}
       uses: actions/cache@v4
       with:
         path: ${{ inputs.pub-cache }}
-        # Cache Pub before Flutter so cached pubspec.locks don't change this hash
-        key: ${{ runner.os }}-${{ runner.arch }}-pub-${{ env.FLUTTER_VERSION }}-${{ hashFiles('**/pubspec.yaml') }}-${{ hashFiles('**/pubspec.lock') }}
+        key: ${{ runner.os }}-${{ runner.arch }}-pub-${{ env.FLUTTER_VERSION }}-${{ hashFiles('**/pubspec.yaml') }}
         restore-keys: |
           ${{ runner.os }}-${{ runner.arch }}-pub-${{ env.FLUTTER_VERSION }}-
 
