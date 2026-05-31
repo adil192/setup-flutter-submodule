@@ -81,9 +81,9 @@ runs:
       uses: actions/cache@v4
       with:
         path: ${{ inputs.pub-cache }}
-        key: ${{ runner.os }}-${{ runner.arch }}-pub-${{ env.FLUTTER_VERSION }}-${{ hashFiles('**/pubspec.yaml') }}
+        key: ${{ runner.os }}-${{ runner.arch }}-pub-v2-${{ env.FLUTTER_VERSION }}-${{ hashFiles('**/pubspec.yaml') }}
         restore-keys: |
-          ${{ runner.os }}-${{ runner.arch }}-pub-${{ env.FLUTTER_VERSION }}-
+          ${{ runner.os }}-${{ runner.arch }}-pub-v2-${{ env.FLUTTER_VERSION }}-
 
     - name: Cache Flutter SDK
       id: cache-flutter
@@ -97,7 +97,7 @@ runs:
           ${{ inputs.flutter-path }}/packages/flutter_tools/gradle/.kotlin/
           ${{ inputs.flutter-path }}/packages/flutter_tools/gradle/build/
           ${{ inputs.flutter-path }}/packages/flutter_tools/pubspec.lock
-        key: ${{ runner.os }}-${{ runner.arch }}-flutter-${{ env.FLUTTER_VERSION }}
+        key: ${{ runner.os }}-${{ runner.arch }}-flutter-v2-${{ env.FLUTTER_VERSION }}
 
     - name: Precache universal Flutter dependencies
       if: ${{ inputs.cache-flutter == 'true' && steps.cache-primes.outputs.cache-hit == '' }}
