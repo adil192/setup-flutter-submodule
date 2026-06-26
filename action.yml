@@ -82,7 +82,7 @@ runs:
 
     - name: Cache Pub
       if: ${{ inputs.cache-pub == 'true' && inputs.no-save-caches != 'true' }}
-      uses: actions/cache@v5
+      uses: actions/cache@v6
       with:
         path: ${{ inputs.pub-cache }}
         key: ${{ runner.os }}-${{ runner.arch }}-pub-v2-${{ env.FLUTTER_VERSION }}-${{ hashFiles('**/pubspec.yaml') }}
@@ -90,7 +90,7 @@ runs:
           ${{ runner.os }}-${{ runner.arch }}-pub-v2-${{ env.FLUTTER_VERSION }}-
     - name: Cache restore Pub
       if: ${{ inputs.cache-pub == 'true' && inputs.no-save-caches == 'true' }}
-      uses: actions/cache/restore@v5
+      uses: actions/cache/restore@v6
       with:
         path: ${{ inputs.pub-cache }}
         key: ${{ runner.os }}-${{ runner.arch }}-pub-v2-${{ env.FLUTTER_VERSION }}-${{ hashFiles('**/pubspec.yaml') }}
@@ -100,7 +100,7 @@ runs:
     - name: Cache Flutter SDK
       id: cache-flutter
       if: ${{ inputs.cache-flutter == 'true' && inputs.no-save-caches != 'true' }}
-      uses: actions/cache@v5
+      uses: actions/cache@v6
       with:
         path: |
           ${{ inputs.flutter-path }}/**/.dart_tool/
@@ -112,7 +112,7 @@ runs:
         key: ${{ runner.os }}-${{ runner.arch }}-flutter-v2-${{ env.FLUTTER_VERSION }}
     - name: Cache restore Flutter SDK
       if: ${{ inputs.cache-flutter == 'true' && inputs.no-save-caches == 'true' }}
-      uses: actions/cache/restore@v5
+      uses: actions/cache/restore@v6
       with:
         path: |
           ${{ inputs.flutter-path }}/**/.dart_tool/
