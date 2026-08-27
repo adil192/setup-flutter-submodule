@@ -67,6 +67,16 @@ runs:
         echo "$FLUTTER_ROOT\\bin" >> $GITHUB_PATH
         echo "$PUB_CACHE\\bin" >> $GITHUB_PATH
 
+    - name: Set Flutter channel
+      shell: bash
+      run: |
+        BRANCH="$(git config -f .gitmodules submodule.${{ inputs.flutter-path }}.branch)"
+        if [ -n "$BRANCH" ]; then
+          git -C ${{ inputs.flutter-path }} switch -C "$BRANCH"
+        else
+          echo "Warning: No branch specified for the Flutter submodule in .gitmodules."
+        fi
+
     - name: Set Flutter version tag
       shell: bash
       working-directory: ${{ inputs.flutter-path }}
