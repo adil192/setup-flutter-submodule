@@ -72,7 +72,7 @@ runs:
       run: |
         BRANCH="$(git config -f .gitmodules submodule.${{ inputs.flutter-path }}.branch)"
         if [ -n "$BRANCH" ]; then
-          git -C ${{ inputs.flutter-path }} switch -c "$BRANCH"
+          git -C ${{ inputs.flutter-path }} switch -C "$BRANCH"
         else
           echo "Warning: No branch specified for the Flutter submodule in .gitmodules."
         fi
