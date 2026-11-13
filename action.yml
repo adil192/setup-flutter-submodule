@@ -89,13 +89,19 @@ runs:
         else
           echo "Warning: Could not determine Flutter version tag for the current commit."
         fi
+    
+    - name: Hash pubspec.yaml
+      id: hash-pubspec
+      shell: bash
+      run: |
+        echo "hash=${{ hashFiles('**/pubspec.yaml') }}" >> "$GITHUB_OUTPUT"
 
     - name: Cache Pub
       if: ${{ inputs.cache-pub == 'true' && inputs.no-save-caches != 'true' }}
       uses: actions/cache@v6
       with:
         path: ${{ inputs.pub-cache }}
-        key: ${{ runner.os }}-${{ runner.arch }}-pub-v2-${{ env.FLUTTER_VERSION }}-${{ hashFiles('**/pubspec.yaml') }}
+        key: ${{ runner.os }}-${{ runner.arch }}-pub-v2-${{ env.FLUTTER_VERSION }}-${{ steps.hash-pubspec.outputs.hash }}
         restore-keys: |
           ${{ runner.os }}-${{ runner.arch }}-pub-v2-${{ env.FLUTTER_VERSION }}-
     - name: Cache restore Pub
@@ -103,7 +109,7 @@ runs:
       uses: actions/cache/restore@v6
       with:
         path: ${{ inputs.pub-cache }}
-        key: ${{ runner.os }}-${{ runner.arch }}-pub-v2-${{ env.FLUTTER_VERSION }}-${{ hashFiles('**/pubspec.yaml') }}
+        key: ${{ runner.os }}-${{ runner.arch }}-pub-v2-${{ env.FLUTTER_VERSION }}-${{ steps.hash-pubspec.outputs.hash }}
         restore-keys: |
           ${{ runner.os }}-${{ runner.arch }}-pub-v2-${{ env.FLUTTER_VERSION }}-
 
